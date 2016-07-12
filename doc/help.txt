@@ -1,0 +1,16 @@
+1.运行项目
+...\polls_project_interface>python3 manage.py runserver
+
+
+2.登录后台添加数据
+http://127.0.0.1:8000/admin/  账号/密码：admin/admin123456
+
+
+3.运行接口用例：
+...\polls_project_interface\polls\interface_tests
+> python3 tests.py
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.153s
+
+OK
