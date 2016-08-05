@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from .models import Question, Choice
-from django.http import HttpResponse
-import json
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -12,19 +11,16 @@ def questions(request):
     if question_list:
         for question in question_list:
             datas[question.id] = question.question_text
-        result = json.dumps({'ststus':200, 'message':'success', 'data':datas})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':200, 'message':'success', 'data':datas})
     else:
-        result = json.dumps({'ststus':10022, 'message':'Query result is empty'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10022, 'message':'Query result is empty'})
 
 
 # 查看问题选项
 def question_option(request):
     qid = request.GET.get('qid', '')
     if qid == '':
-        result = json.dumps({'ststus':10021, 'message': 'Parameter error'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10021, 'message': 'Parameter error'})
 
     choices = Choice.objects.filter(question_id=qid)
     datas = {}
@@ -32,19 +28,16 @@ def question_option(request):
     if choices:
         for choice in choices:
             datas[choice.id] = choice.choice_text
-        result = json.dumps({'ststus':200, 'message':'success', 'data':datas})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':200, 'message':'success', 'data':datas})
     else:
-        result = json.dumps({'ststus':10022, 'message':'Query result is empty'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10022, 'message':'Query result is empty'})
 
 
 # 查看问题的投票结果
 def question_result(request):
     qid = request.GET.get('qid', '')
     if qid == '':
-        result = json.dumps({'ststus':10021, 'message':'Parameter error'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10021, 'message':'Parameter error'})
 
     choices = Choice.objects.filter(question_id=qid)
     datas = {}
@@ -52,11 +45,9 @@ def question_result(request):
     if choices:
         for r in choices:
             datas[r.choice_text] = r.votes
-        result = json.dumps({'ststus':200, 'message':'success', 'data':datas})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':200, 'message':'success', 'data':datas})
     else:
-        result = json.dumps({'ststus':10022, 'message':'Query result is empty'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10022, 'message':'Query result is empty'})
 
 
 # 选择投票
@@ -66,8 +57,7 @@ def question_vote(request):
     cid = request.POST.get('cid', '')
 
     if qid == '' or cid == '':
-        result = json.dumps({'ststus':10021, 'message':'Parameter error'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10021, 'message':'Parameter error'})
 
     choices = Choice.objects.filter(question_id=qid)
 
@@ -76,13 +66,10 @@ def question_vote(request):
             p = get_object_or_404(Question, pk=qid)
             selected_choice = p.choice_set.get(pk=cid)
         except (KeyError, Choice.DoesNotExist):
-            result = json.dumps({'ststus':10023, 'message':'The problem is not the choice id'})
-            return HttpResponse(result)
+            return JsonResponse({'ststus':10023, 'message':'The problem is not the choice id'})
         else:
             selected_choice.votes += 1
             selected_choice.save()
-            result = json.dumps({'ststus':200, 'message':'success'})
-            return HttpResponse(result)
+            return JsonResponse({'ststus':200, 'message':'success'})
     else:
-        result = json.dumps({'ststus':10022, 'message':'Query result is empty'})
-        return HttpResponse(result)
+        return JsonResponse({'ststus':10022, 'message':'Query result is empty'})
